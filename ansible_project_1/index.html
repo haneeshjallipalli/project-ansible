@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mutual Fund Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Mutual Fund Calculator</h2>
+    <div class="input-group">
+        <label for="investment">Investment (₹):</label>
+        <input type="number" id="investment" step="0.01">
+    </div>
+    <div class="input-group">
+        <label for="profit">Profit (₹):</label>
+        <input type="number" id="profit" step="0.01">
+    </div>
+    <div class="input-group">
+        <label for="expenseRatio">Expense Ratio (%):</label>
+        <input type="number" id="expenseRatio" step="0.01" value="0.75">
+    </div>
+    <div class="input-group">
+        <label for="exitLoad">Exit Load (%):</label>
+        <input type="number" id="exitLoad" step="0.01" value="1.0">
+    </div>
+    <div class="input-group">
+        <label for="holdingPeriod">Holding Period (months):</label>
+        <input type="number" id="holdingPeriod" step="1" value="12">
+    </div>
+    <button onclick="calculateFundDetails()">Calculate</button>
+    <div class="result">
+        <p id="expenseOutput"></p>
+        <p id="exitLoadOutput"></p>
+        <p id="taxOutput"></p>
+        <p id="finalAmountOutput"></p>
+    </div>
+</div>
+
+<script>
+    function calculateFundDetails() {
+        const investmentInput = document.getElementById('investment');
+        const profitInput = document.getElementById('profit');
+        const expenseRatioInput = document.getElementById('expenseRatio');
+        const exitLoadInput = document.getElementById('exitLoad');
+        const holdingPeriodInput = document.getElementById('holdingPeriod');
+    
+        // Validate inputs
+        const investment = parseFloat(investmentInput.value);
+        const profit = parseFloat(profitInput.value);
+        const expenseRatio = parseFloat(expenseRatioInput.value) / 100;
+        const exitLoad = parseFloat(exitLoadInput.value) / 100;
+        const holdingPeriod = parseInt(holdingPeriodInput.value);
+    
+        // Check if inputs are valid numbers
+        if (isNaN(investment) || isNaN(profit) || isNaN(expenseRatio) || isNaN(exitLoad) || isNaN(holdingPeriod)) {
+            alert("Please enter valid numbers for all inputs.");
+            return;
+        }
+    
+        // Calculate average AUM for simplicity
+        const averageAum = investment + (profit / 2);
+    
+        // Calculate Expense Ratio Fee
+        const expenseFee = averageAum * expenseRatio;
+    
+        // Calculate Exit Load if holding period is within 12 months
+        const exitLoadFee = holdingPeriod <= 12 ? (investment + profit) * exitLoad : 0;
+    
+        // Calculate Tax
+        let tax = 0;
+        if (holdingPeriod <= 12) {
+            tax = profit * 0.15;  // Short Term Capital Gains Tax
+        } else {
+            const taxableProfit = Math.max(0, profit - 100000);  // LTCG applies only above ₹1 lakh profit
+            tax = taxableProfit * 0.10;  // Long Term Capital Gains Tax
+        }
+    
+        // Calculate Final Amount
+        const finalAmount = investment + profit - expenseFee - exitLoadFee - tax;
+    
+        // Display results
+        document.getElementById('expenseOutput').innerText = `Expense Ratio Fee: ₹${expenseFee.toFixed(2)}`;
+        document.getElementById('exitLoadOutput').innerText = `Exit Load Fee: ₹${exitLoadFee.toFixed(2)}`;
+        document.getElementById('taxOutput').innerText = `Tax: ₹${tax.toFixed(2)}`;
+        document.getElementById('finalAmountOutput').innerText = `Final Amount: ₹${finalAmount.toFixed(2)}`;
+    }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,26 @@
+---
+- name : Install Nginx
+  hosts: web_server
+  become: true
+  tasks:
+    - name: Install Nginx
+      apt:
+        name: nginx 
+        state: present
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: true
+    - name: Copy the index file
+      copy:
+        src: project-ansible/ansible_project_1/index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+        enabled: true
