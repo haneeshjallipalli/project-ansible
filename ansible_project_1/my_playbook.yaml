@@ -14,7 +14,7 @@
         enabled: true
     - name: Copy the index file
       copy:
-        src: project-ansible/ansible_project_1/index.html
+        src: ./index.html
         dest: /var/www/html/index.html
         owner: root
         group: root
